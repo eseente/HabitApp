@@ -20,7 +20,8 @@ app.listen(port, () => {
     console.log("Server running on port 3000");
 });
 
-const Habit = require("./models/habit")
+const Habit = require("./models/habit");
+const { Try } = require("expo-router/build/views/Try");
 //endpoint to create a habit in the backend
 app.post("/habits",async(req,res)=>{
     try{
@@ -32,10 +33,42 @@ app.post("/habits",async(req,res)=>{
             repeatMode,
             reminder
         })
-
+        console.log("New habit created",newHabit);
         const savedHabit = await newHabit.save();
-        res.status(2000).json(savedHabit);
+        res.status(200).json(savedHabit);
     }catch(error){
-        res.status(500).json({error:"Network error"})
+        console.log('backend error:',error)
+        res.status(500).json({error:error})
+    }
+});
+
+app.get("/habitsList",async(req,res)=>{
+    try {
+        const allHabits = await Habit.find({});
+
+        res.status(200).json(allHabits)
+    } catch (error) {
+        res.status(500).json({error:error.message})
+    }
+});
+
+app.put("/habits/:habitId/completed/:day",async(req,res)=>{
+    try {
+        const {habitId,day} = req.params;
+
+        const habit = await Habit.findById(habitId);
+
+        if(!habit){
+            return res.status(404).json({error:"Habit not found"})
+        }
+
+        habit.completed[day] = true;
+
+        await habit.save();
+
+        res.status(200).json({message:"Habit complettion status updated"})
+    } catch (error) {
+        console.log("Error",error);
+        res.status(500).json({error:error.message})
     }
 })

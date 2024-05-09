@@ -1,9 +1,12 @@
-import { Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import React from 'react'
-import { Ionicons } from '@expo/vector-icons';
+import { Alert, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import React, { useState } from 'react'
+import { Ionicons, AntDesign } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
+import axios from 'axios';
 
 const create = () => {
+  const [selectedColor,setSelectedColor] = useState("");
+  const [title,setTitle] = useState("");
   const colors =[
     "#FF5733", //Red
     "#FFD700", //Gold
@@ -14,19 +17,46 @@ const create = () => {
     "#4169E1", //Royal Blue
   ];
   const days =["M","T","W","T","F","S","S"];
+  async function addHabit(){
+    try {
+      const habitDetails = {
+        title:title,
+        color:selectedColor,
+        repeateMode:"daily",
+        reminder:true
+      };
+      
+      const response = await axios.post("http://192.168.0.101:3000/habits",habitDetails);
+    
+      if(response.status === 200){
+        setTitle("");
+        Alert.alert("Habit added succesfully","Enjoy Practising")
+      }
+      console.log("habit added",response)
+    } catch (error) {
+      console.log("error adding a habit",error.message)
+    }
+  }
   return (
     <View style={{padding:10}}>
       <Ionicons name="arrow-back" size={24} color="black" />
 
       <Text style={{fontSize:20,marginTop:10}}>Create <Text style={{fontSize:20,fontWeight:"500"}}>Habit</Text></Text>
-      <TextInput style={{width:"95%", marginTop:15,padding:15,borderRadius:10,backgroundColor:"#E1EBEE" }}placeholder='Title'></TextInput>
+      <TextInput 
+      value={title}
+      onChangeText={(text)=>setTitle(text)}
+      style={{width:"95%", marginTop:15,padding:15,borderRadius:10,backgroundColor:"#E1EBEE" }}placeholder='Title'></TextInput>
     
       <View style={{marginVertical:10}}>
           <Text style={{fontSize:18,fontWeight:"500"}}>Color</Text>
           <View style={{flexDirection:'row',alignItems:'center',gap:10,marginTop:10}}>
             {colors?.map((item,index)=>(
-              <TouchableOpacity key={index} activeOpacity={0.8}>
-                <FontAwesome name="square" size={30} color={item} />
+              <TouchableOpacity onPress={()=> setSelectedColor(item)} key={index} activeOpacity={0.8}>
+                {selectedColor == item?(
+                  <AntDesign name="plussquare" size={30} color={item} />
+                ): (
+                  <FontAwesome name="square" size={30} color={item} />
+                )}
               </TouchableOpacity>
             ))}
           </View>
@@ -61,7 +91,7 @@ const create = () => {
       </View>
 
 
-      <Pressable style={{marginTop:25,backgroundColor:'#00428c',padding:10,borderRadius:8}}>
+      <Pressable onPress={addHabit} style={{marginTop:25,backgroundColor:'#00428c',padding:10,borderRadius:8}}>
         <Text style={{textAlign:'center',color:'white',fontWeight:'bold'}}>SAVE</Text>
       </Pressable>
     </View>
