@@ -23,8 +23,12 @@
         "backgroundColor": "#ffffff"
       }
     },
+    "scheme": "HabitApp",
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      "expo-router"
+    ]
   }
 }
