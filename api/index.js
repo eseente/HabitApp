@@ -21,7 +21,7 @@ app.listen(port, () => {
 });
 
 const Habit = require("./models/habit");
-const { Try } = require("expo-router/build/views/Try");
+
 //endpoint to create a habit in the backend
 app.post("/habits",async(req,res)=>{
     try{
