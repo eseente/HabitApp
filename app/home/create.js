@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { Ionicons, AntDesign } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons';
 import axios from 'axios';
+import { router } from 'expo-router';
 
 const create = () => {
   const [selectedColor,setSelectedColor] = useState("");
@@ -39,7 +40,7 @@ const create = () => {
   }
   return (
     <View style={{padding:10}}>
-      <Ionicons name="arrow-back" size={24} color="black" />
+      <Ionicons onPress={()=>router.push("/home/")} name="arrow-back" size={24} color="black" />
 
       <Text style={{fontSize:20,marginTop:10}}>Create <Text style={{fontSize:20,fontWeight:"500"}}>Habit</Text></Text>
       <TextInput 
